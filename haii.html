@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quiz Bucin WebP + Musik</title>
+<style>
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: #ffe6e6;
+    color: #b3003b;
+    margin: 0;
+    padding: 0;
+    transition: background 1s ease;
+    overflow-x: hidden;
+  }
+  .container {
+    max-width: 550px;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.603);
+    border-radius: 20px;
+    padding: 30px 25px;
+    box-shadow: 0 8px 20px rgba(0, 92, 179, 0.39);
+    text-align: center;
+    transition: background 1s ease;
+  }
+  h1 { margin-bottom: 10px; text-shadow: 2px 2px 5px rgba(179,0,59,0.8); }
+  p.description { font-size: 1.1rem; font-weight: 600; margin-top: 0; }
+  input[type="text"] {
+    width: 90%; max-width: 300px; padding: 12px 15px; margin: 15px 0;
+    font-size: 1.1rem; border-radius: 10px; border: 2px solid #ff4d6d;
+    outline: none; transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  input[type="text"]:focus { border-color: #ff1a3c; box-shadow: 0 0 8px #ff1a3c; }
+  button {
+    padding: 12px 25px; margin: 15px 10px 0 10px;
+    border-radius: 10px; border: none; font-weight: 700; font-size: 1.1rem;
+    cursor: pointer; transition: background-color 0.3s, transform 0.3s;
+    user-select: none;
+  }
+  button.yes { background-color: #ff4d6d; color: white; }
+  button.yes:hover:not(:disabled) { background-color: #ff1a3c; }
+  button.no { background-color: #ccc; color: #555; position: relative; }
+  button:disabled { background-color: #ccc !important; cursor: not-allowed !important; }
+  .hidden { display: none; }
+
+  .fade-in { animation: fadeIn 0.8s ease forwards; opacity: 0; }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  #slide-container {
+    margin-top: 20px; background: rgba(255,255,255,0.95);
+    border-radius: 15px; padding: 20px; box-shadow: 0 6px 15px rgba(179,0,59,0.2);
+    position: relative; min-height: 120px;
+  }
+  #slide-text { font-size: 1.2rem; font-weight: 600; color: #b3003b;
+    min-height: 80px; user-select: none; text-align: center; line-height: 1.4; }
+  #slide-controls { margin-top: 15px; }
+  #slide-controls button { background-color: #ff4d6d; color: white;
+    padding: 8px 18px; font-size: 1rem; border-radius: 8px; margin: 0 10px; }
+  #slide-controls button:disabled { background-color: #ccc; cursor: not-allowed; }
+
+  .step-gif { width: 200px; height: auto; margin-top: 15px; display: none;
+    border-radius: 15px; box-shadow: 0 4px 12px rgba(179,0,59,0.5); }
+  #gif-final { width: 250px; }
+
+  body.love-bg {
+  background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80'), 
+              url('https://cdn.pixabay.com/photo/2017/01/31/21/21/heart-2026560_1280.png');
+  background-repeat: no-repeat, repeat;
+  background-position: center center, center center;
+  background-size: cover, 60px 60px;
+  color: rgb(143, 71, 71); text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+  transition: background 1.5s ease; 
+  overflow-y: auto;
+}
+
+#final-content {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.5);
+}
+
+</style>
+</head>
+<body>
+
+<audio id="bg-music" autoplay loop>
+  <source src="lagu.mp3" type="audio/mpeg">
+  Browsermu tidak mendukung audio.
+</audio>
+
+<div class="container" id="quiz-container">
+
+  <div id="step-0">
+    <h1 id="step0-title">Halo wiwid ❤️</h1>
+    <p class="description" id="description">Silahkan masukkan namamu dulu ya!</p>
+    <input id="yourName" type="text" placeholder="Nama kamu" autocomplete="off" />
+    <br />
+    <button id="start-btn">Masuk ke hatiku</button>
+    <img class="step-gif" id="gif-step0" src="step0.webp" alt="Animasi Step 0" />
+  </div>
+
+  <div id="step-1" class="hidden">
+    <h1 id="step1-title">jawab dulu yuk</h1>
+    <p class="question">Apakah kamu sayang denganku?</p>
+    <button class="yes" id="yes-1">Sayang banget</button>
+    <button class="no" id="no-1">Enggak</button>
+    <img class="step-gif" id="gif-step1" src="step1.webp" alt="Animasi Step 1" />
+  </div>
+
+  <div id="step-2" class="hidden">
+    <h1 id="step2-title">jawab dengan jujur😠</h1>
+    <p class="question">Sayang banget nih🤭?</p>
+    <button class="yes" id="yes-2">Iya</button>
+    <button class="no" id="no-2">Enggak</button>
+    <img class="step-gif" id="gif-step2" src="step2.webp" alt="Animasi Step 2" />
+  </div>
+
+  <div id="step-3" class="hidden">
+    <h1 id="step3-title">rileks dulu hihi</h1>
+    <h2>Dengerin aku yah.. 💬</h2>
+    <div id="slide-container">
+      <div id="slide-text"></div>
+      <div id="slide-controls">
+        <button id="prev-slide" disabled>Prev</button>
+        <button id="next-slide">Next</button>
+      </div>
+    </div>
+    <button class="yes" id="next-to-step-4" style="margin-top:20px;" disabled>Lanjut ke pertanyaan terakhir</button>
+    <img class="step-gif" id="gif-step3" src="step3.webp" alt="Animasi Step 3" />
+  </div>
+
+  <div id="step-4" class="hidden">
+    <h1 id="step4-title">terakhir nih</h1>
+    <p class="question">Kamu mau gak jadi pendamping hidupku?</p>
+    <button class="yes" id="yes-4">Mau dong</button>
+    <button class="no" id="no-4">Enggak deh</button>
+    <img class="step-gif" id="gif-step4" src="step4.webp" alt="Animasi Step 4" />
+  </div>
+
+  <div id="final-step" class="hidden">
+    <h2>Yaaayy Kamu Beneran sayang sama aku 😝😝 💖</h2>
+    <div id="final-content" style="max-height: 60vh; overflow-y: auto; padding: 15px; margin-bottom: 20px; border-radius:10px; background: rgba(255,255,255,0.8);">
+      <p id="final-message">
+        <em>
+          "Kadang aku duduk sendiri, mengingat semua yang sudah kita lewati bersama. Dari hal-hal kecil yang membuat kita tertawa sampai momen sulit yang bikin kita belajar lebih banyak tentang satu sama lain. Kalau dipikir-pikir, dulu memang seru yah, bukan cuma keseruan biasa, tapi keseruan yang bikin kita tumbuh bersama. Aku bersyukur karena setiap momen itu membuatku semakin mengerti, bukan hanya sebagai pasangan, tapi sebagai orang yang aku percaya untuk terus ada di hidupku. Aku nggak janji semuanya akan selalu mudah, tapi aku akan terus berusaha menjaga, menghormati kita, dan mencintai kamu dengan tulus. Aku ingin kita tetap bersama, bukan karena kebiasaan, tapi karena kita memilih untuk terus berjalan berdampingan, menghadapi dunia bersama-sama. Semoga kita bisa jadi pribadi yang lebih baik."
+        </em>
+      </p>
+    </div>
+    <div style="text-align:center;">
+      <button id="save-btn" style="background-color:#28a745; color:white; padding:12px 25px; border-radius:10px; font-weight:bold; margin-right:15px; cursor:pointer;">
+        Simpan
+      </button>
+      <button id="exit-btn" style="background-color:#dc3545; color:white; padding:12px 25px; border-radius:10px; font-weight:bold; cursor:pointer;">
+        Keluar
+      </button>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+  const yourNameInput = document.getElementById('yourName');
+  const startBtn = document.getElementById('start-btn');
+  const step0 = document.getElementById('step-0');
+  const step1 = document.getElementById('step-1');
+  const step2 = document.getElementById('step-2');
+  const step3 = document.getElementById('step-3');
+  const step4 = document.getElementById('step-4');
+  const finalStep = document.getElementById('final-step');
+  const desc = document.getElementById('description');
+
+  const yes1 = document.getElementById('yes-1');
+  const no1 = document.getElementById('no-1');
+  const yes2 = document.getElementById('yes-2');
+  const no2 = document.getElementById('no-2');
+  const prevSlideBtn = document.getElementById('prev-slide');
+  const nextSlideBtn = document.getElementById('next-slide');
+  const slideText = document.getElementById('slide-text');
+  const nextToStep4Btn = document.getElementById('next-to-step-4');
+  const yes4 = document.getElementById('yes-4');
+  const no4 = document.getElementById('no-4');
+
+  const saveBtn = document.getElementById('save-btn');
+
+saveBtn.addEventListener('click', () => {
+    const finalMessage = document.getElementById('final-message').innerText;
+
+    const blob = new Blob([finalMessage], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Quiz_Bucin.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+
+    alert('Pesan berhasil disimpan!');
+});
+
+  const exitBtn = document.getElementById('exit-btn');
+  const quizContainer = document.getElementById('quiz-container');
+
+  const bgMusic = document.getElementById('bg-music');
+
+  function makeButtonRunAway(button) {
+    const parentWidth = button.parentElement.offsetWidth;
+    const buttonWidth = button.offsetWidth;
+    let newLeft = Math.random() * (parentWidth - buttonWidth);
+    let newTop = (Math.random() * 40) - 20;
+    button.style.position = 'relative';
+    button.style.left = `${newLeft}px`;
+    button.style.top = `${newTop}px`;
+    button.style.transition = 'left 0.3s ease, top 0.3s ease';
+    button.blur();
+  }
+  function resetButtonPosition(button) { button.style.left='0px'; button.style.top='0px'; }
+  function showStepWithFade(stepElement) {
+    stepElement.classList.remove('hidden'); stepElement.classList.remove('fade-in'); void stepElement.offsetWidth;
+    stepElement.classList.add('fade-in');
+  }
+  function showGifForStep(stepId) {
+    document.querySelectorAll('.step-gif').forEach(img => img.style.display = 'none');
+    let gif;
+    if(stepId === 'final') {
+      gif = document.getElementById('gif-final');
+    } else {
+      gif = document.getElementById('gif-' + stepId);
+    }
+    if(gif) gif.style.display = 'block';
+  }
+
+  const gombalanSlides = [
+    "Sayang, aku tahu hari ini mungkin berat, tapi ingat aku selalu ada di sisimu. Semangat, karena aku percaya kamu bisa melewati semua ini❤️",
+    "Aku nggak janji segalanya mudah, tapi aku selalu ada untukmu💖",
+    "You are special, kind and beautiful, always take care of your health,,,"
+  ];
+  let currentSlide = 0;
+  function updateSlide() {
+    slideText.textContent = gombalanSlides[currentSlide];
+    prevSlideBtn.disabled = currentSlide===0;
+    nextSlideBtn.disabled = currentSlide===gombalanSlides.length-1;
+    nextToStep4Btn.disabled = currentSlide!==gombalanSlides.length-1;
+  }
+
+  startBtn.addEventListener('click', () => {
+    const yourName = yourNameInput.value.trim();
+    if(!yourName){ alert('Isi dulu namamu ya!'); return; }
+    step0.classList.add('hidden'); showStepWithFade(step1); desc.textContent='Jawab pertanyaan berikut dengan jujur ya!';
+    resetButtonPosition(no1); showGifForStep('step1');
+    if(bgMusic.paused) bgMusic.play();
+  });
+
+  no1.addEventListener('mouseenter',()=>makeButtonRunAway(no1)); no1.addEventListener('click',e=>e.preventDefault());
+  yes1.addEventListener('click',()=>{ step1.classList.add('hidden'); showStepWithFade(step2); desc.textContent='Pertanyaan berikutnya...'; resetButtonPosition(no2); showGifForStep('step2'); });
+
+  no2.addEventListener('mouseenter',()=>makeButtonRunAway(no2)); no2.addEventListener('click',e=>e.preventDefault());
+  yes2.addEventListener('click',()=>{ step2.classList.add('hidden'); currentSlide=0; updateSlide(); showStepWithFade(step3); desc.textContent='Baca dulu gombalan ini ya...'; showGifForStep('step3'); });
+
+  prevSlideBtn.addEventListener('click',()=>{ if(currentSlide>0){currentSlide--; updateSlide();} });
+  nextSlideBtn.addEventListener('click',()=>{ if(currentSlide<gombalanSlides.length-1){currentSlide++; updateSlide();} });
+
+  nextToStep4Btn.addEventListener('click',()=>{ if(!nextToStep4Btn.disabled){ step3.classList.add('hidden'); showStepWithFade(step4); desc.textContent='Pertanyaan terakhir nih!'; resetButtonPosition(no4); showGifForStep('step4'); } });
+
+  no4.addEventListener('mouseenter',()=>makeButtonRunAway(no4)); no4.addEventListener('click',e=>e.preventDefault());
+  yes4.addEventListener('click', () => {
+    step4.classList.add('hidden');
+    showStepWithFade(finalStep);
+    desc.textContent='';
+    document.body.className='love-bg';
+    showGifForStep('final');
+  });
+
+  exitBtn.addEventListener('click',()=>{
+    quizContainer.style.display='none';
+    const byeMsg=document.createElement('div');
+    byeMsg.style.textAlign='center'; byeMsg.style.marginTop='100px';
+    byeMsg.style.fontSize='1.5rem'; byeMsg.style.color='#b3003b';
+    byeMsg.textContent='Terima kasih sudah mengikuti quiz! Sampai jumpa!';
+    document.body.appendChild(byeMsg);
+    document.body.className='';
+    bgMusic.pause();
+  });
+
+  document.getElementById('gif-step0').style.display='none';
+</script>
+<body>
+</html>
